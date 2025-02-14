@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система Очереди</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .queue-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Система Очереди</h1>
+        <input id="name" type="text" placeholder="Введите ваше имя" />
+        <select id="service">
+            <option value="kredit xizmati">Кредитный сервис</option>
+            <option value="karta olish">Получение карты</option>
+            <option value="xazna">Касса</option>
+        </select>
+        <br />
+        <button onclick="addToQueue()">Добавить в очередь</button>
+        <button onclick="callFromQueue()">Вызвать из очереди</button>
+        <button onclick="viewQueue()">Просмотреть очередь</button>
+        <p id="message"></p>
+        <div id="queueList" class="queue-list"></div>
+    </div>
+
+    <script>
+        async function addToQueue() {
+            const name = document.getElementById("name").value;
+            const service = document.getElementById("service").value;
+
+            if (!name) {
+                alert("Пожалуйста, введите ваше имя!");
+                return;
+            }
+
+            const response = await fetch('/add_to_queue', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ism: name, xizmat: service })
+            });
+            const data = await response.json();
+            document.getElementById("message").innerText = data.message;
+        }
+
+        async function callFromQueue() {
+            const response = await fetch('/call_from_queue', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await response.json();
+            document.getElementById("message").innerText = data.message;
+        }
+
+        async function viewQueue() {
+            const response = await fetch('/view_queue', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await response.json();
+
+            const queueList = document.getElementById("queueList");
+            queueList.innerHTML = "<h3>Текущая очередь:</h3>";
+            if (data.queue.length === 0) {
+                queueList.innerHTML += "<p>Очередь пуста.</p>";
+            } else {
+                data.queue.forEach((item, index) => {
+                    queueList.innerHTML += `<p>${index + 1}. ${item.ism} (${item.xizmat})</p>`;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
