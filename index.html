@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafe Navbat Tizimi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #navbat {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kafe Navbat Tizimi</h1>
+        <button onclick="navbatQosh()">Navbatga qo'shish</button>
+        <button onclick="navbatChaqir()">Navbatdan chaqirish</button>
+        <p id="navbat">Hozirgi navbat: Yo'q</p>
+    </div>
+
+    <script>
+        // Navbat massivini saqlash
+        let navbat = [];
+        let navbatRaqami = 0;
+
+        // Navbatga qo'shish
+        function navbatQosh() {
+            navbatRaqami++;
+            navbat.push(`Navbat ${navbatRaqami}`);
+            alert(`Navbat ${navbatRaqami} qo'shildi!`);
+            yangilash();
+        }
+
+        // Ovozli chaqirish funksiyasi
+        function ovozChaqir(matn) {
+            let msg = new SpeechSynthesisUtterance(matn);
+
+            // Chiroyli ovoz sozlamalari
+            msg.rate = 1; // Ovoz tezligi (1 odatiy)
+            msg.pitch = 1.2; // Ovozni ohangdor qilish (1 odatiy)
+            msg.volume = 1; // Ovoz balandligi (1 odatiy)
+
+            // Brauzer ovozlarini olish va birini tanlash
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                msg.voice = voices.find(voice => voice.lang === "uz-UZ") || voices[0]; // "uz-UZ" tilida ovoz bo'lmasa, birinchi ovozni ishlatadi
+            }
+            window.speechSynthesis.speak(msg);
+        }
+
+        // Navbatdan chaqirish
+        function navbatChaqir() {
+            if (navbat.length > 0) {
+                let chaqirilgan = navbat.shift();
+
+                // Tasodifiy kassa tanlash (1 yoki 2)
+                let kassa = Math.floor(Math.random() * 2) + 1;
+
+                // Navbatni 2 soniyadan keyin chaqirish
+                setTimeout(() => {
+                    let matn = `${chaqirilgan}, iltimos ${kassa}-kassaga keling!`;
+                    alert(matn);
+                    ovozChaqir(matn);
+                    yangilash();
+                }, 2000);
+            } else {
+                alert("Navbatda hech kim yo'q!");
+            }
+        }
+
+        // Hozirgi navbatni yangilash
+        function yangilash() {
+            const navbatP = document.getElementById('navbat');
+            if (navbat.length > 0) {
+                navbatP.textContent = `Hozirgi navbat: ${navbat[0]}`;
+            } else {
+                navbatP.textContent = "Hozirgi navbat: Yo'q";
+            }
+        }
+        let kassa = Math.floor(Math.random() * 2) + 1;
+        let matn = `${chaqirilgan}, iltimos ${kassa}-kassaga keling!`;
+
+    </script>
+</body>
+</html>
